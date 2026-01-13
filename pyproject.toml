@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "Jack Blacketter"}
+    {name = "Gregory Blacketter"}
 ]
 keywords = ["testing", "automation", "behave", "playwright", "bdd"]
 

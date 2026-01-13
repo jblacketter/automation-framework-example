@@ -1,0 +1,25 @@
+# Test Framework
+behave==1.2.6
+behave-html-formatter==0.9.10
+
+# Browser Automation
+playwright==1.49.1
+
+# API Testing
+requests==2.32.3
+
+# Configuration & Environment
+python-dotenv==1.0.1
+
+# Assertions
+assertpy==1.1
+
+# Utilities
+colorama==0.4.6
+Faker==33.1.0
+
+# MCP
+fastmcp>=0.1.0
+
+# Reporting
+allure-behave==2.13.5

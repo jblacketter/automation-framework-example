@@ -1,0 +1,94 @@
+{
+  "project": {
+    "name": "automation-framework-example",
+    "description": "BDD Test Automation Framework with Python, Behave, and Playwright"
+  },
+  "skills": [
+    {
+      "name": "run-tests",
+      "description": "Run Behave tests with various configurations",
+      "file": "skills/run-tests.md"
+    },
+    {
+      "name": "setup-environment",
+      "description": "Set up the development environment",
+      "file": "skills/setup-environment.md"
+    },
+    {
+      "name": "create-test",
+      "description": "Create new test scenarios and components",
+      "file": "skills/create-test.md"
+    },
+    {
+      "name": "debug-test",
+      "description": "Debug failing tests",
+      "file": "skills/debug-test.md"
+    },
+    {
+      "name": "fix-selectors",
+      "description": "Update UI selectors when target site changes",
+      "file": "skills/fix-selectors.md"
+    },
+    {
+      "name": "add-api-endpoint",
+      "description": "Add support for a new API endpoint with service and tests",
+      "file": "skills/add-api-endpoint.md"
+    },
+    {
+      "name": "add-page-object",
+      "description": "Create a new page object for UI testing",
+      "file": "skills/add-page-object.md"
+    },
+    {
+      "name": "review-tests",
+      "description": "Review test code for quality and best practices",
+      "file": "skills/review-tests.md"
+    },
+    {
+      "name": "memory",
+      "description": "Query or store project knowledge (patterns, decisions, findings)",
+      "file": "skills/memory.md"
+    },
+    {
+      "name": "brief",
+      "description": "Create and manage task briefs for test development",
+      "file": "skills/brief.md"
+    },
+    {
+      "name": "decide",
+      "description": "Log architectural and implementation decisions",
+      "file": "skills/decide.md"
+    },
+    {
+      "name": "review",
+      "description": "Run reviewer checklists against code changes",
+      "file": "skills/review.md"
+    },
+    {
+      "name": "route",
+      "description": "Suggest which model should handle a task",
+      "file": "skills/route.md"
+    }
+  ],
+  "context": {
+    "tech_stack": ["Python", "Behave", "Playwright", "Requests"],
+    "test_types": ["API", "UI"],
+    "patterns": ["Singleton", "Page Object Model", "Service Layer"],
+    "target_apps": {
+      "api": "https://restful-booker.herokuapp.com",
+      "ui": "https://automationintesting.online"
+    }
+  },
+  "workflows": {
+    "lead_reviewer": {
+      "description": "Lead generates, reviewer checks, human arbitrates",
+      "skills": ["brief", "route", "review", "decide"]
+    }
+  },
+  "mcpServers": {
+    "test-runner": {
+      "command": "python",
+      "args": ["mcp_server/test_runner_server.py"]
+    }
+  }
+}

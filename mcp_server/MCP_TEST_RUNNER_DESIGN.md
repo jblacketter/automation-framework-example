@@ -10,7 +10,7 @@ Add an MCP server to the automation framework that allows AI assistants to execu
 
 ```
 automation-framework-example/
-├── mcp/
+├── mcp_server/
 │   ├── __init__.py
 │   ├── test_runner_server.py    # Main MCP server
 │   └── README.md                # Setup instructions
@@ -34,7 +34,7 @@ automation-framework-example/
 
 ## Server Implementation
 
-### mcp/test_runner_server.py
+### mcp_server/test_runner_server.py
 
 ```python
 """
@@ -101,7 +101,7 @@ def run_tests(
     Returns:
         Test execution results with pass/fail counts and details
     """
-    cmd = ["behave", "--format", "json", "--outfile", "reports/results.json"]
+    cmd = ["behave", "--format", "json", "--outfile", "reports/results_run_<run_id>.json"]
     
     if tags:
         cmd.extend(["--tags", tags])
@@ -133,7 +133,7 @@ def get_last_results() -> dict:
     Returns:
         Parsed test results with summary and failure details
     """
-    results_file = REPORTS_DIR / "results.json"
+    results_file = REPORTS_DIR / "results_run_<run_id>.json"
     
     if not results_file.exists():
         return {"error": "No results found. Run tests first."}
@@ -239,7 +239,7 @@ def _parse_results(result: subprocess.CompletedProcess, dry_run: bool) -> dict:
     if dry_run:
         return {"dry_run": True, "output": result.stdout}
     
-    results_file = REPORTS_DIR / "results.json"
+    results_file = REPORTS_DIR / "results_run_<run_id>.json"
     if results_file.exists():
         try:
             raw = json.loads(results_file.read_text())
@@ -367,7 +367,7 @@ fastmcp>=0.1.0
 
 ```bash
 mkdir -p mcp
-touch mcp/__init__.py
+touch mcp_server/__init__.py
 # Copy test_runner_server.py content
 ```
 
@@ -376,7 +376,7 @@ touch mcp/__init__.py
 ```bash
 cd ~/projects/automation-framework-example
 source .venv/bin/activate
-python mcp/test_runner_server.py
+python mcp_server/test_runner_server.py
 ```
 
 ### 4. Configure for Claude Desktop
@@ -388,7 +388,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
   "mcpServers": {
     "test-runner": {
       "command": "python",
-      "args": ["/full/path/to/automation-framework-example/mcp/test_runner_server.py"],
+      "args": ["/full/path/to/automation-framework-example/mcp_server/test_runner_server.py"],
       "env": {
         "PATH": "/full/path/to/automation-framework-example/.venv/bin"
       }
@@ -406,7 +406,7 @@ Add to `.claude/settings.json` in the project:
   "mcpServers": {
     "test-runner": {
       "command": "python",
-      "args": ["mcp/test_runner_server.py"]
+      "args": ["mcp_server/test_runner_server.py"]
     }
   }
 }
@@ -441,13 +441,14 @@ In an interview: *"Let me show you how I've integrated AI into my test workflow"
 
 ## Future Extensions
 
-Once the basic server works, consider adding:
+Once the basic server works, consider adding complementary MCP servers:
 
 | Server | Tools | Purpose |
 |--------|-------|---------|
-| **Failure Analyzer** | `analyze_screenshot`, `suggest_fix`, `compare_to_baseline` | AI diagnoses failures |
-| **Test Generator** | `generate_scenario`, `analyze_api_spec` | AI creates new tests |
-| **Test Data Manager** | `create_fixtures`, `cleanup_all`, `seed_database` | AI manages test data |
+| **Failure Analyzer (A1)** | `analyze_failure`, `get_screenshot`, `suggest_fix` | Diagnose failures with artifacts |
+| **Data Factory (A2)** | `list_factories`, `generate_data`, `generate_batch` | Generate test data |
+| **API Client (A4)** | `list_services`, `call_method`, `get_api_schema` | Explore/test APIs safely |
+| **Test Generator (qaagent)** | `generate_scenario`, `analyze_api_spec` | Deferred to qaagent |
 
 ---
 

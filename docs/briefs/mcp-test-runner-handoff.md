@@ -199,7 +199,7 @@ Add to `.claude/settings.json`:
   "mcpServers": {
     "test-runner": {
       "command": "python",
-      "args": ["mcp/test_runner_server.py"]
+      "args": ["mcp_server/test_runner_server.py"]
     }
   }
 }
@@ -211,7 +211,7 @@ Add to `.claude/settings.json`:
 
 After implementation, Claude Code will validate:
 
-- [ ] Server starts without errors: `python mcp/test_runner_server.py`
+- [ ] Server starts without errors: `python mcp_server/test_runner_server.py`
 - [ ] `list_features("all")` returns api + ui features without key collisions
 - [ ] `run_tests(tags="@smoke")` executes and returns run_id
 - [ ] `run_tests(dry_run=True)` shows what would run
@@ -231,6 +231,6 @@ After implementation, Claude Code will validate:
 - The existing framework has 4 passing smoke tests (3 API, 1 UI)
 - WIP tests are tagged `@wip` and skipped
 - Screenshots go to `reports/screenshots/`
-- Behave JSON output works: `behave --format json --outfile reports/results.json`
+- Behave JSON output works: `behave --format json --outfile reports/results_run_<run_id>.json`
 
 Ready for implementation!

@@ -25,3 +25,17 @@ Feature: Authentication API
     Given I am not authenticated
     When I am authenticated as "admin" with password "password123"
     Then the token should be valid
+
+  Scenario: Re-authentication after logout
+    Given I am authenticated as admin
+    Then the token should be valid
+    Given I am not authenticated
+    When I am authenticated as admin
+    Then the token should be valid
+
+  @smoke
+  Scenario: Token persists across requests
+    Given I am authenticated as admin
+    Then the token should be valid
+    When I request all bookings
+    Then the response should be successful

@@ -89,6 +89,10 @@
     "test-runner": {
       "command": "python",
       "args": ["mcp_server/test_runner_server.py"]
+    },
+    "data-factory": {
+      "command": "python",
+      "args": ["mcp_server/data_factory_server.py"]
     }
   }
 }

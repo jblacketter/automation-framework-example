@@ -306,3 +306,33 @@ class BookingService:
         """
         response, _ = self.get_booking(booking_id)
         return response.status_code == 200
+
+    def create_from_builder(
+        self, booking: "Booking"
+    ) -> tuple[requests.Response, ResponseValidator]:
+        """
+        Create a booking from a Booking builder object.
+
+        Usage:
+            from factories import BookingBuilder
+
+            booking = BookingBuilder().for_weekend().with_breakfast().build()
+            response, validator = service.create_from_builder(booking)
+
+        Args:
+            booking: Booking object from BookingBuilder
+
+        Returns:
+            Tuple of (Response, ResponseValidator)
+        """
+        from factories.booking_builder import Booking
+
+        return self.create_booking(
+            firstname=booking.guest.firstname,
+            lastname=booking.guest.lastname,
+            check_in=booking.check_in,
+            check_out=booking.check_out,
+            total_price=booking.total_price,
+            deposit_paid=booking.deposit_paid,
+            additional_needs=booking.additional_needs,
+        )

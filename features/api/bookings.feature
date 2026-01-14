@@ -57,3 +57,50 @@ Feature: Booking API
   Scenario: Get non-existent booking
     When I request booking with ID 99999999
     Then the response status code should be 404
+
+  Scenario: Filter bookings by firstname
+    When I create a booking for "UniqueTestName" "FilterTest"
+    And I request bookings filtered by firstname "UniqueTestName"
+    Then the response should be successful
+    And the response should be valid JSON
+    And the response should be an array
+
+  Scenario: Create booking with additional needs
+    When I create a booking for "VIP" "Guest"
+    Then the response status code should be 200
+    And the response should contain "bookingid"
+
+  @smoke
+  Scenario: Health check - API is available
+    When I make a GET request to "/ping"
+    Then the response status code should be 201
+
+  Scenario: Get booking details contains all required fields
+    Given bookings exist in the system
+    When I request booking with ID 1
+    Then the response should be successful
+    And the response should contain "firstname"
+    And the response should contain "lastname"
+    And the response should contain "totalprice"
+    And the response should contain "depositpaid"
+    And the response should contain "bookingdates"
+
+  @auth_required
+  Scenario: Update booking as authenticated user
+    Given I am authenticated as admin
+    When I create a booking for "Update" "TestUser"
+    Then the response status code should be 200
+    And the response should contain "bookingid"
+
+  @builder
+  Scenario: Create weekend booking using builder pattern
+    When I create a weekend booking with breakfast
+    Then the response status code should be 200
+    And the response should contain "bookingid"
+    And the response field "booking.depositpaid" should not be empty
+
+  @builder
+  Scenario: Create long stay booking using builder pattern
+    When I create a long stay booking for 7 nights
+    Then the response status code should be 200
+    And the response should contain "bookingid"

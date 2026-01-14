@@ -147,6 +147,6 @@ How many runs to retain?
 - [ ] `.claude/settings.json` - Add MCP server config
 
 ## References
-- Design doc: `mcp/MCP_TEST_RUNNER_DESIGN.md`
+- Design doc: `mcp_server/MCP_TEST_RUNNER_DESIGN.md`
 - FastMCP docs: https://github.com/jlowin/fastmcp
 - MCP specification: https://modelcontextprotocol.io

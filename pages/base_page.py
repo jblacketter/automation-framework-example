@@ -6,12 +6,15 @@ common methods and ensure consistent patterns across the framework.
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional
+import time
+from typing import Callable, Optional, TypeVar
 
 from playwright.sync_api import Page, Locator, expect
 
 from core.config import Config
 from core.logger import get_logger
+
+T = TypeVar("T")
 
 
 class BasePage(ABC):
@@ -90,6 +93,87 @@ class BasePage(ABC):
         """
         self.logger.debug(f"Clicking: {selector}")
         self.page.click(selector)
+
+    # Retry helpers for flaky interactions
+
+    def retry_action(
+        self,
+        action: Callable[[], T],
+        retries: int = 3,
+        delay: float = 0.5,
+        description: str = "action",
+    ) -> T:
+        """
+        Execute an action with retry logic for transient failures.
+
+        Useful for handling flaky UI interactions caused by timing issues,
+        animations, or temporary element states.
+
+        Args:
+            action: Callable to execute (should raise on failure)
+            retries: Maximum number of attempts (default: 3)
+            delay: Delay between retries in seconds (default: 0.5)
+            description: Description for logging purposes
+
+        Returns:
+            The result of the action if successful
+
+        Raises:
+            The last exception if all retries fail
+        """
+        last_exception: Optional[Exception] = None
+
+        for attempt in range(retries):
+            try:
+                return action()
+            except Exception as e:
+                last_exception = e
+                if attempt < retries - 1:
+                    self.logger.warning(
+                        f"{description} failed (attempt {attempt + 1}/{retries}): {e}"
+                    )
+                    time.sleep(delay)
+                else:
+                    self.logger.error(
+                        f"{description} failed after {retries} attempts: {e}"
+                    )
+
+        raise last_exception  # type: ignore[misc]
+
+    def retry_click(self, selector: str, retries: int = 3, delay: float = 0.5) -> None:
+        """
+        Click an element with retry logic for transient failures.
+
+        Args:
+            selector: CSS selector or text selector
+            retries: Maximum number of attempts (default: 3)
+            delay: Delay between retries in seconds (default: 0.5)
+        """
+        self.retry_action(
+            action=lambda: self.page.click(selector),
+            retries=retries,
+            delay=delay,
+            description=f"Click '{selector}'",
+        )
+
+    def retry_fill(
+        self, selector: str, value: str, retries: int = 3, delay: float = 0.5
+    ) -> None:
+        """
+        Fill an input with retry logic for transient failures.
+
+        Args:
+            selector: CSS selector
+            value: Value to enter
+            retries: Maximum number of attempts (default: 3)
+            delay: Delay between retries in seconds (default: 0.5)
+        """
+        self.retry_action(
+            action=lambda: self.page.fill(selector, value),
+            retries=retries,
+            delay=delay,
+            description=f"Fill '{selector}'",
+        )
 
     def fill(self, selector: str, value: str) -> None:
         """

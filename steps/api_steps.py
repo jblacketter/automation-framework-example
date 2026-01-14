@@ -102,6 +102,47 @@ def step_create_test_booking(context):
             context.created_booking_id = booking_id
 
 
+@when("I create a weekend booking with breakfast")
+def step_create_weekend_booking(context):
+    """Create a weekend booking using the builder pattern."""
+    from factories import BookingBuilder
+
+    booking = BookingBuilder().for_weekend().with_breakfast().with_deposit().build()
+    booking_service = BookingService()
+
+    context.response, context.validator = booking_service.create_from_builder(booking)
+
+    if context.response.status_code == 200:
+        booking_id = context.validator.get_field("bookingid", raise_on_missing=False)
+        if booking_id:
+            context.bookings_to_cleanup.append(booking_id)
+            context.created_booking_id = booking_id
+
+
+@when("I create a long stay booking for {nights:d} nights")
+def step_create_long_stay_booking(context, nights):
+    """Create a long stay booking using the builder pattern."""
+    from factories import BookingBuilder
+
+    booking = (
+        BookingBuilder()
+        .for_nights(nights)
+        .starting_in_days(14)
+        .with_deposit()
+        .with_late_checkout()
+        .build()
+    )
+    booking_service = BookingService()
+
+    context.response, context.validator = booking_service.create_from_builder(booking)
+
+    if context.response.status_code == 200:
+        booking_id = context.validator.get_field("bookingid", raise_on_missing=False)
+        if booking_id:
+            context.bookings_to_cleanup.append(booking_id)
+            context.created_booking_id = booking_id
+
+
 @when("I delete the created booking")
 def step_delete_created_booking(context):
     """Delete the most recently created booking."""

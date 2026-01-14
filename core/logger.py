@@ -49,8 +49,10 @@ def get_logger(name: str, level: Optional[str] = None) -> logging.Logger:
     """
     Get a configured logger instance.
 
-    Uses a module-level logger to prevent duplicate handlers when
-    the same module requests a logger multiple times.
+    Note: logging.getLogger(name) internally caches loggers by name, so
+    repeated calls with the same name return the same logger object.
+    However, we still check for existing handlers because getLogger
+    doesn't prevent duplicate handler registration on subsequent calls.
 
     Args:
         name: Logger name (typically __name__)
@@ -61,33 +63,32 @@ def get_logger(name: str, level: Optional[str] = None) -> logging.Logger:
     """
     logger = logging.getLogger(name)
 
-    # Only add handlers if none exist (prevents duplicates)
-    if not logger.handlers:
-        # Import here to avoid circular dependency
-        from core.config import Config
+    # getLogger caches loggers, but we must still guard against adding
+    # duplicate handlers when get_logger is called multiple times
+    if logger.handlers:
+        return logger
 
-        config = Config()
-        log_level = level or config.log_level
+    # Import here to avoid circular dependency
+    from core.config import Config
 
-        logger.setLevel(getattr(logging, log_level.upper(), logging.INFO))
+    config = Config()
+    log_level = level or config.log_level
 
-        # Console handler with formatting
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(logging.DEBUG)
+    logger.setLevel(getattr(logging, log_level.upper(), logging.INFO))
 
-        formatter = logging.Formatter(
+    # Console handler with formatting
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    handler.setFormatter(
+        logging.Formatter(
             fmt="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
         )
-        handler.setFormatter(formatter)
+    )
+    handler.addFilter(SensitiveDataFilter())
 
-        # Add sensitive data filter
-        handler.addFilter(SensitiveDataFilter())
-
-        logger.addHandler(handler)
-
-        # Prevent propagation to root logger (avoids duplicate logs)
-        logger.propagate = False
+    logger.addHandler(handler)
+    logger.propagate = False  # Prevent duplicate logs to root logger
 
     return logger
 

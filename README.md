@@ -2,7 +2,7 @@
 
 A modern, production-ready test automation framework demonstrating best practices for both **API** and **UI** testing using Python, Behave (BDD), and Playwright.
 
-**Role in the QA suite:** *Canonical modern reference.* Pick this one when you want to see the current "right way" to build a Behave + Playwright framework. For legacy Selenium-in-Docker infrastructure patterns (harvested from a retired client-engagement framework), see `../docs/selenium-docker-patterns.md`. For advanced patterns harvested from a production-grade contract framework (abstract, PII-scrubbed), see `../docs/northstar-patterns.md`.
+**Role in the QA suite:** *Canonical modern reference.* Pick this one when you want to see the current "right way" to build a Behave + Playwright framework. This is a standalone sibling repo (it lived under the QA suite folder until 2026-06-12). Two companion pattern docs live in the QA suite repo (`jblacketter/QA`, under `docs/`): `selenium-docker-patterns.md` (legacy Selenium-in-Docker infra patterns) and `northstar-patterns.md` (advanced patterns harvested from a production-grade contract framework, abstract and PII-scrubbed).
 
 ## Why This Framework?
 
@@ -27,8 +27,8 @@ This framework showcases enterprise-grade test automation patterns I've develope
 | **Abstract BasePage** | Common Playwright methods (click, fill, wait) in one place; pages focus on their specific locators and actions |
 | **Environment Hooks** | Automatic cleanup, screenshot capture, browser lifecycle management |
 | **Fluent ResponseValidator** | Chain assertions naturally: `validator.status(200).has_field("id").field_equals("name", "Test")` |
-| **Centralized WaitUtils** | One module (`core/wait_utils.py`) owns all Playwright wait semantics — network-idle, element-visible, element-hidden, spinner-gone. Page objects delegate rather than calling `page.wait_for_*` directly, so timeout and retry policy change in one place. Borrowed from [`docs/northstar-patterns.md`](../docs/northstar-patterns.md) P9. |
-| **Cleanup-signal naming in factories** | Generated guest lastnames carry a recognizable `Automated-XXXXX` prefix (see `factories/guest_builder.py`) so a real backend's cleanup script can sweep test records by regex. Paired with per-run ID tracking when targeted teardown is also needed. Borrowed from [`docs/northstar-patterns.md`](../docs/northstar-patterns.md) P10. |
+| **Centralized WaitUtils** | One module (`core/wait_utils.py`) owns all Playwright wait semantics — network-idle, element-visible, element-hidden, spinner-gone. Page objects delegate rather than calling `page.wait_for_*` directly, so timeout and retry policy change in one place. Borrowed from the QA suite's `docs/northstar-patterns.md` P9. |
+| **Cleanup-signal naming in factories** | Generated guest lastnames carry a recognizable `Automated-XXXXX` prefix (see `factories/guest_builder.py`) so a real backend's cleanup script can sweep test records by regex. Paired with per-run ID tracking when targeted teardown is also needed. Borrowed from the QA suite's `docs/northstar-patterns.md` P10. |
 
 ## Tech Stack
 

@@ -13,6 +13,7 @@ from playwright.sync_api import Page, Locator, expect
 
 from core.config import Config
 from core.logger import get_logger
+from core.wait_utils import WaitUtils
 
 T = TypeVar("T")
 
@@ -72,7 +73,7 @@ class BasePage(ABC):
 
     def wait_for_page_load(self) -> None:
         """Wait for the page to fully load."""
-        self.page.wait_for_load_state("networkidle")
+        WaitUtils.wait_for_network_idle(self.page)
 
     def get_title(self) -> str:
         """Get the page title."""
@@ -308,9 +309,16 @@ class BasePage(ABC):
         Returns:
             Locator for the element
         """
-        locator = self.page.locator(selector)
-        locator.wait_for(state=state, timeout=timeout)
-        return locator
+        if state == "visible":
+            WaitUtils.wait_for_element_visible(self.page, selector, timeout)
+        elif state == "hidden":
+            WaitUtils.wait_for_element_hidden(self.page, selector, timeout)
+        else:
+            # "attached" / "detached" — not covered by WaitUtils; fall through
+            # to the locator-level wait so callers still get full Playwright
+            # state coverage through this method.
+            self.page.locator(selector).wait_for(state=state, timeout=timeout)
+        return self.page.locator(selector)
 
     def wait_for_text(self, selector: str, text: str, timeout: Optional[int] = None) -> None:
         """

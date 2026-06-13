@@ -2,6 +2,8 @@
 
 A modern, production-ready test automation framework demonstrating best practices for both **API** and **UI** testing using Python, Behave (BDD), and Playwright.
 
+**Role in the QA suite:** *Canonical modern reference.* Pick this one when you want to see the current "right way" to build a Behave + Playwright framework. For Selenium patterns (legacy), see `../python-behave-framework/`. For a lighter API-only example, see `../python-behave-api/`. For advanced patterns harvested from a production-grade contract framework (abstract, PII-scrubbed), see `../docs/northstar-patterns.md`.
+
 ## Why This Framework?
 
 This framework showcases enterprise-grade test automation patterns I've developed across multiple projects. It's designed to be:
@@ -25,6 +27,8 @@ This framework showcases enterprise-grade test automation patterns I've develope
 | **Abstract BasePage** | Common Playwright methods (click, fill, wait) in one place; pages focus on their specific locators and actions |
 | **Environment Hooks** | Automatic cleanup, screenshot capture, browser lifecycle management |
 | **Fluent ResponseValidator** | Chain assertions naturally: `validator.status(200).has_field("id").field_equals("name", "Test")` |
+| **Centralized WaitUtils** | One module (`core/wait_utils.py`) owns all Playwright wait semantics — network-idle, element-visible, element-hidden, spinner-gone. Page objects delegate rather than calling `page.wait_for_*` directly, so timeout and retry policy change in one place. Borrowed from [`docs/northstar-patterns.md`](../docs/northstar-patterns.md) P9. |
+| **Cleanup-signal naming in factories** | Generated guest lastnames carry a recognizable `Automated-XXXXX` prefix (see `factories/guest_builder.py`) so a real backend's cleanup script can sweep test records by regex. Paired with per-run ID tracking when targeted teardown is also needed. Borrowed from [`docs/northstar-patterns.md`](../docs/northstar-patterns.md) P10. |
 
 ## Tech Stack
 
@@ -170,6 +174,15 @@ automation-framework-example/
 ```
 
 ## Configuration
+
+Copy the template and fill in values:
+
+```bash
+cp .env.example .env
+# edit .env with your values
+```
+
+`.env` is ignored via the suite-level `.gitignore` at `~/projects/QA/.gitignore`. The values shipped in `.env.example` point at public test targets (`automationintesting.online`, `restful-booker.herokuapp.com`) — safe defaults, no real credentials.
 
 | Variable | Description | Default |
 |----------|-------------|---------|

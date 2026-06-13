@@ -1,11 +1,33 @@
 """
 Guest data builder for test scenarios.
+
+Cleanup-signal naming convention (from docs/northstar-patterns.md P10):
+generated guest lastnames carry a recognizable prefix — `Automated-<5 digits>` —
+so a real backend's cleanup script can sweep automation-created records by
+regex (`^Automated-\\d{5}$`, case-insensitive). This pattern is a **signal**,
+not a unique ID — pair it with per-run ID tracking (e.g. a
+`context.cleanup_<entity>_ids` list on Behave's `context`) when you also
+need targeted teardown for the specific records a single run produced.
+
+The two public demo targets this framework points at
+(`automationintesting.online`, `restful-booker.herokuapp.com`) don't
+actually need cleanup; this pattern is shown for portability to real
+backends where test-data accumulation is a real problem. Callers who
+need truly realistic names can still override via `.with_lastname(...)`.
 """
 
+import random
 from dataclasses import dataclass, field
 from typing import Optional
 
 from faker import Faker
+
+_AUTO_LASTNAME_PREFIX = "Automated-"
+
+
+def _cleanup_signal_lastname() -> str:
+    """Generate a cleanup-recognizable lastname: `Automated-<5 digits>`."""
+    return f"{_AUTO_LASTNAME_PREFIX}{random.randint(10000, 99999)}"
 
 
 @dataclass
@@ -88,10 +110,15 @@ class GuestBuilder:
         return self
 
     def build(self) -> Guest:
-        """Build and return the Guest object."""
+        """Build and return the Guest object.
+
+        When no explicit lastname was set via `with_name` / `with_lastname`,
+        the builder produces a cleanup-signal lastname (`Automated-XXXXX`)
+        instead of a raw Faker lastname — see the module docstring.
+        """
         return Guest(
             firstname=self._firstname or self._fake.first_name(),
-            lastname=self._lastname or self._fake.last_name(),
+            lastname=self._lastname or _cleanup_signal_lastname(),
             email=self._email,
             phone=self._phone,
         )

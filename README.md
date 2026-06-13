@@ -2,7 +2,7 @@
 
 A modern, production-ready test automation framework demonstrating best practices for both **API** and **UI** testing using Python, Behave (BDD), and Playwright.
 
-**Role in the QA suite:** *Canonical modern reference.* Pick this one when you want to see the current "right way" to build a Behave + Playwright framework. For Selenium patterns (legacy), see `../python-behave-framework/`. For a lighter API-only example, see `../python-behave-api/`. For advanced patterns harvested from a production-grade contract framework (abstract, PII-scrubbed), see `../docs/northstar-patterns.md`.
+**Role in the QA suite:** *Canonical modern reference.* Pick this one when you want to see the current "right way" to build a Behave + Playwright framework. For legacy Selenium-in-Docker infrastructure patterns (harvested from a retired client-engagement framework), see `../docs/selenium-docker-patterns.md`. For advanced patterns harvested from a production-grade contract framework (abstract, PII-scrubbed), see `../docs/northstar-patterns.md`.
 
 ## Why This Framework?
 
